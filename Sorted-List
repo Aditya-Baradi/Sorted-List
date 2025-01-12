@@ -1,0 +1,146 @@
+import java.util.*;
+
+
+class SortedList<E extends Comparable<? super E>> extends List<E> {
+    // Inner Node class
+    private class Node {
+        E data;
+        Node next;
+
+
+        Node(E data) {
+            this.data = data;
+        }
+    }
+
+
+    // Start with an empty list
+    private Node head;
+
+
+    @Override
+    public void insert(E data) {
+        head = insertRecursive(head, data);
+    }
+
+
+    private Node insertRecursive(Node current, E data) {
+        // Base case: insert new node
+        if (current == null) {
+            return new Node(data);
+        }
+
+        // Recursive case: traverse to the correct position
+        if (data.compareTo(current.data) < 0) {
+            Node newNode = new Node(data);
+            newNode.next = current;
+            return newNode; // New node becomes the new head
+        }
+        else {
+            current.next = insertRecursive(current.next, data);
+            return current; // Return unchanged current node
+        }
+    }
+
+
+    @Override
+    public void remove(E data) {
+        head = removeRecursive(head, data);
+    }
+
+    private Node removeRecursive(Node current, E data) {
+        if (current == null) {
+
+            return null; // Base case: end of list
+        }
+
+        if (data.equals(current.data)) {
+
+            return current.next; // Node to be removed
+        }
+
+        current.next = removeRecursive(current.next, data); // Recursive call
+
+        return current; // Return current node
+    }
+
+
+
+    @Override
+    public E retrieve(int index) {
+        return retrieveRecursive(head, index);
+    }
+
+    private E retrieveRecursive(Node current, int index) {
+        if (index < 0|| current == null) {
+
+            return null; // Base case: index out of bounds
+
+        }
+
+        if (index == 0) {
+
+            return current.data; // Base case: found the node
+
+        }
+
+        return retrieveRecursive(current.next, index - 1); // Recursive call
+
+    }
+
+
+
+    @Override
+    public boolean search(E data) {
+
+        return searchRecursive(head, data);
+
+    }
+
+    private boolean searchRecursive(Node current, E data) {
+        if (current == null) {
+
+            return false; // Base case: end of list
+        }
+        if (data.equals(current.data)) {
+
+            return true; // Found the data
+        }
+
+        return searchRecursive(current.next, data); // Recursive call
+    }
+
+
+
+    // Inner Iterator class
+    private class SortedListIterator implements Iterator<E> {
+        private Node current = head;
+
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        @Override
+        public E next() {
+            if (!hasNext()) {
+
+                throw new NoSuchElementException(); // Handle case where there is no next element
+
+            }
+            E data = current.data;
+
+            current = current.next;
+
+            return data;
+
+        }
+    }
+
+
+
+    @Override
+    public Iterator<E> iterator() {
+        return new SortedListIterator();
+    }
+}
